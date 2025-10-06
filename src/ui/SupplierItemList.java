@@ -1,0 +1,427 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package ui;
+
+import java.io.IOException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import models.User;
+import services.SupplierManager;
+
+/**
+ *
+ * @author lunwe
+ */
+public class SupplierItemList extends javax.swing.JFrame {
+    
+    private String SupplierID;
+    private String SupplierName;
+    private double distance;
+    private JTable savedItemTable;
+    private SupplierManager sm = new SupplierManager();
+    private DefaultTableModel tableModel;
+    private TableRowSorter<DefaultTableModel> sorter;
+    private SupplierItems supplierItemsRef;
+    private User user;
+    
+    /**
+     * Creates new form SupplierItemList
+     */
+    
+    public SupplierItemList(SupplierItems supplierItemsRef) {
+        this.supplierItemsRef = supplierItemsRef;
+        initComponents();
+        // Any other setup
+    }
+    public SupplierItemList(String SupplierID, String SupplierName, JTable savedItemTableFromSupplierGUI, double distance, User user) {
+        this.SupplierID = SupplierID;
+        this.SupplierName = SupplierName;
+        this.distance = distance;
+        this.user = user;
+        initComponents();
+        setLocationRelativeTo(null);
+        this.savedItemTable = savedItemTableFromSupplierGUI;
+        List<String[]> itemlist = sm.loadItemsFromFile("Item.txt");
+        DefaultTableModel model = sm.getItemTableModel(itemlist);
+        tblItemList.setModel(model);
+        sorter = new TableRowSorter<>(model);
+        tblItemList.setRowSorter(sorter);
+        
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String keyword = txtSearch.getText().trim();
+                filterSuppliers(keyword);
+            }
+        });
+        
+        tblItemList.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int row = tblItemList.getSelectedRow();
+                if (row >= 0 && tblItemList.getRowCount() > 0 && tblItemList.getColumnCount() >= 2) {
+                    try {
+                        txtItemID2.setText(tblItemList.getValueAt(row, 0).toString());
+                        txtItemName.setText(tblItemList.getValueAt(row, 1).toString());
+                    } catch (Exception ex) {
+                        System.err.println("Error reading selected row: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+
+    }
+    
+    private void filterSuppliers(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            sorter.setRowFilter(null); 
+        } else {
+            sorter.setRowFilter(RowFilter.regexFilter("(?i)" + keyword, 0, 1));
+        }
+    }
+    
+    private boolean validateInputs(){
+        if (txtItemID2.getText().trim().isEmpty() || txtItemName.getText().trim().isEmpty() || txtPrice.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Insufficient Credentials. Item Entry Declined.");
+            return false;
+            
+        }  
+        
+        if (txtPrice.getText().trim().matches(".*[a-zA-Z]+.*")){
+            JOptionPane.showMessageDialog(null, "Invalid Price Entry. Letters are not allowed.");
+            return false;            
+        }
+        return true;
+    }
+    
+    public void selectTable(JTable table, JTextField idField, JTextField nameField) {
+        table.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int row = table.getSelectedRow();
+                if (row >= 0 && table.getRowCount() > 0 && table.getColumnCount() >= 2) {
+                    try {
+                        Object idObj = table.getValueAt(row, 0);
+                        Object nameObj = table.getValueAt(row, 1);
+
+                        if (idObj != null && nameObj != null) {
+                            idField.setText(idObj.toString());
+                            nameField.setText(nameObj.toString());
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Error reading selected row: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    public void clearFields(){
+        txtItemID2.setText(""); txtItemName.setText("");txtPrice.setText("");
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        btnBack1 = new javax.swing.JButton();
+        jLabel18 = new javax.swing.JLabel();
+        txtItemID2 = new javax.swing.JTextField();
+        btnAdd2 = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblItemList = new javax.swing.JTable();
+        jLabel19 = new javax.swing.JLabel();
+        txtItemName = new javax.swing.JTextField();
+        ItemNameLabel1 = new javax.swing.JLabel();
+        txtPrice = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+
+        jRadioButton1.setText("jRadioButton1");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel2.setBackground(new java.awt.Color(102, 204, 255));
+
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel13.setText("Add Items");
+
+        btnBack1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnBack1.setText("Back");
+        btnBack1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBack1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnBack1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(152, 152, 152))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(btnBack1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 14, Short.MAX_VALUE))
+        );
+
+        jLabel18.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel18.setText("Item ID:");
+
+        txtItemID2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtItemID2ActionPerformed(evt);
+            }
+        });
+
+        btnAdd2.setBackground(new java.awt.Color(102, 255, 51));
+        btnAdd2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnAdd2.setText("Add Item");
+        btnAdd2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdd2ActionPerformed(evt);
+            }
+        });
+
+        tblItemList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Item ID", "Item Name"
+            }
+        ));
+        jScrollPane1.setViewportView(tblItemList);
+
+        jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel19.setText("Name: ");
+
+        txtItemName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtItemNameActionPerformed(evt);
+            }
+        });
+
+        ItemNameLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        ItemNameLabel1.setText("Search Item:");
+
+        txtPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPriceActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel20.setText("Supplied Price:");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(48, 48, 48)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemID2, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(31, 31, 31)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemName, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(33, 33, 33)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtPrice)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 592, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(ItemNameLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnAdd2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(53, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ItemNameLabel1)
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtItemID2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel19)
+                                    .addComponent(jLabel20))
+                                .addGap(6, 6, 6)
+                                .addComponent(txtItemName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(18, 18, 18)
+                .addComponent(btnAdd2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 32, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void txtItemID2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemID2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtItemID2ActionPerformed
+
+    private void btnAdd2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdd2ActionPerformed
+        if(!validateInputs()){
+            return;
+        }
+        String itemCode = txtItemID2.getText();
+        boolean d = false;
+
+        for (int i = 0; i < savedItemTable.getRowCount(); i++) {
+            Object cellValue = savedItemTable.getValueAt(i, 0); // used object as iit can store null and check ltr
+            if (cellValue != null && txtItemID2.getText().trim().equals(cellValue.toString().trim())){
+                d = true;
+                break;
+            }
+        }
+
+        if (d) {
+            JOptionPane.showMessageDialog(null, "Repeated Item ID found in the Supplier Items table.");
+        } else {
+            sm.addItemCode(SupplierID, txtItemID2.getText().trim(), txtPrice.getText().trim());
+            JOptionPane.showMessageDialog(null, "Items Successfully Added into the List.");
+            try {
+                sm.displaySupplierItems(SupplierID, savedItemTable);
+                savedItemTable.repaint();
+                savedItemTable.revalidate();
+            } catch (IOException e) {
+
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Failed to load supplier items.");
+           }
+            clearFields();
+        }
+
+
+    }//GEN-LAST:event_btnAdd2ActionPerformed
+
+    private void btnBack1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBack1ActionPerformed
+        SupplierItems ItemSupply = new SupplierItems(SupplierID, SupplierName, distance, user);
+        ItemSupply.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnBack1ActionPerformed
+
+    private void txtItemNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtItemNameActionPerformed
+
+    private void txtPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPriceActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(SupplierItemList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(SupplierItemList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(SupplierItemList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(SupplierItemList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                //new SupplierItemList().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel ItemNameLabel1;
+    private javax.swing.JButton btnAdd2;
+    private javax.swing.JButton btnBack1;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblItemList;
+    private javax.swing.JTextField txtItemID2;
+    private javax.swing.JTextField txtItemName;
+    private javax.swing.JTextField txtPrice;
+    private javax.swing.JTextField txtSearch;
+    // End of variables declaration//GEN-END:variables
+}
